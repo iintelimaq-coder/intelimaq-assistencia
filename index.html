@@ -1,90 +1,12 @@
 <!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#183b32">
-  <meta name="description" content="Gerador de mensagens de atendimento técnico da Intelimaq.">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" href="./icons/icon-192.png">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
-  <title>Intelimaq • Assistência técnica</title>
-</head>
-<body>
-  <main class="app">
-    <header class="topbar">
-      <div class="brand-mark" aria-hidden="true">IM</div>
-      <div>
-        <p class="eyebrow">INTELIMAQ</p>
-        <h1>Assistência técnica</h1>
-      </div>
-      <span class="offline-pill" id="connectionStatus">Pronto para usar</span>
-    </header>
-
-    <section class="intro">
-      <p class="eyebrow">REGISTRO DE ATENDIMENTO</p>
-      <h2>Vamos registrar essa ligação.</h2>
-      <p>Preencha os dados e gere a mensagem para enviar ao cliente pelo WhatsApp.</p>
-    </section>
-
-    <form id="attendanceForm" autocomplete="on">
-      <section class="panel">
-        <div class="section-heading">
-          <span class="step">01</span>
-          <div><h3>Dados do atendimento</h3><p>Identifique o cliente e a máquina.</p></div>
-        </div>
-
-        <label for="client">Nome do cliente <span class="required">*</span></label>
-        <input id="client" name="client" type="text" placeholder="Ex.: Antônio" required>
-
-        <div class="field-grid">
-          <div>
-            <label for="machine">Modelo da máquina <span class="required">*</span></label>
-            <input id="machine" name="machine" type="text" placeholder="Ex.: IQ50" required>
-          </div>
-          <div>
-            <label for="osNumber">Nº da O.S. <span class="required">*</span></label>
-            <input id="osNumber" name="osNumber" type="text" inputmode="numeric" placeholder="Ex.: 3449" required>
-          </div>
-        </div>
-
-        <label for="description">Descrição do atendimento <span class="required">*</span></label>
-        <textarea id="description" name="description" rows="5" placeholder="Descreva o problema relatado, as orientações e o resultado..." required></textarea>
-        <p class="hint">Dica: registre o que foi relatado, o que foi orientado e qual foi o resultado.</p>
-
-        <label for="technician">Técnico responsável <span class="required">*</span></label>
-        <select id="technician" name="technician" required>
-          <option value="Alison Moura">Alison Moura</option>
-          <option value="Jonathan Xavier">Jonathan Xavier</option>
-          <option value="Raphael Soares">Raphael Soares</option>
-        </select>
-      </section>
-
-      <section class="panel preview-panel">
-        <div class="section-heading">
-          <span class="step">02</span>
-          <div><h3>Mensagem pronta</h3><p>Confira antes de compartilhar.</p></div>
-        </div>
-        <pre id="messagePreview" aria-live="polite">Preencha os campos acima para montar a mensagem.</pre>
-        <div class="actions">
-          <button type="button" class="button button-primary" id="shareButton">
-            <span aria-hidden="true">↗</span> Compartilhar
-          </button>
-          <button type="button" class="button button-secondary" id="copyButton">
-            <span aria-hidden="true">▢</span> Copiar mensagem
-          </button>
-        </div>
-        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
-        <p class="privacy-note"><span aria-hidden="true">🔒</span> Os dados são usados apenas para montar a mensagem nesta sessão. O app não mantém histórico nem envia os dados para um servidor.</p>
-      </section>
-    </form>
-
-    <footer>
-      <span>Intelimaq • Assistência técnica</span>
-      <button type="button" id="clearButton" class="text-button">Limpar formulário</button>
-    </footer>
-  </main>
-  <script src="./app.js" defer></script>
-</body>
-</html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#173d63"><meta name="description" content="Gerador de mensagens de registro de atendimento técnico Intelimaq."><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css"><title>Intelimaq | Assistência Técnica</title></head>
+<body><main class="container"><header class="brand"><div class="brand-mark">⚙️</div><div><h1>INTELIMAQ</h1><p>Assistência Técnica</p></div></header>
+<section class="panel"><h2>Gerar registro de atendimento</h2><p class="intro">Preencha os dados disponíveis e gere uma mensagem pronta para enviar pelo WhatsApp.</p><form id="messageForm">
+<div class="field"><label for="treatment">Tratamento do cliente <span>(opcional)</span></label><select id="treatment"><option value="">Não informar</option><option value="Sr.">Sr.</option><option value="Sra.">Sra.</option></select></div>
+<div class="field"><label for="client">Nome do cliente <span>(opcional)</span></label><input id="client" type="text" placeholder="Ex.: Antônio"></div>
+<div class="field"><label for="machine">Modelo da máquina <span>(opcional)</span></label><input id="machine" type="text" placeholder="Ex.: IQ50"></div>
+<div class="field"><label for="serial">Número de série <span>(opcional)</span></label><input id="serial" type="text" placeholder="Número de série do equipamento"></div>
+<div class="field"><label for="description">Descrição do atendimento <span>(opcional)</span></label><textarea id="description" rows="5" placeholder="Descreva o que foi conversado, orientado ou realizado."></textarea></div>
+<div class="field"><label for="technician">Técnico responsável</label><select id="technician" required><option>Alison Moura</option><option>Jonathan Xavier</option><option>Raphael Soares</option></select></div>
+<div class="actions"><button type="submit" class="primary">Gerar mensagem</button><button type="button" id="copyBtn" class="secondary">Copiar mensagem</button><button type="button" id="shareBtn" class="secondary">Compartilhar</button></div></form></section>
+<section class="panel output-panel"><div class="output-heading"><h2>Prévia da mensagem</h2><span id="status" role="status" aria-live="polite"></span></div><textarea id="output" rows="16" readonly aria-label="Prévia da mensagem gerada" placeholder="A mensagem aparecerá aqui."></textarea><p class="privacy-note">🔒 Os dados não são salvos nem mantidos em histórico. A mensagem é montada neste dispositivo.</p></section><footer>Intelimaq · Assistência Técnica</footer></main><script src="app.js"></script></body></html>
