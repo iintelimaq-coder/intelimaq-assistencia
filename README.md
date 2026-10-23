@@ -1,0 +1,1 @@
+# intelimaq-assistencia
