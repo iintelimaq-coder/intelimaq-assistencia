@@ -14,9 +14,9 @@ function buildMessage(){
  const machineInfo=machine?` da máquina *${machine}*`:'';
  const serialInfo=serial?`${machineInfo?' —':''} Nº de série: *${serial}*`:'';
  let opening=contact?`Conforme contato com *${contact}*, da empresa *${company}*, registramos as informações referentes ao atendimento${machineInfo}${serialInfo}.`:`Registramos as informações referentes ao atendimento da empresa *${company}*${machineInfo}${serialInfo}.`;
- const parts=['⚙️ *_INTELIMAQ | ASSISTÊNCIA TÉCNICA_*','------------------------------------------------------------------','📋 *REGISTRO DE ATENDIMENTO TÉCNICO*','',opening];
+ const parts=['⚙️ *_INTELIMAQ | ASSISTÊNCIA TÉCNICA_*','________________________________','📋 *REGISTRO DE ATENDIMENTO TÉCNICO*','',opening];
  if(description)parts.push('','🔧 *Descrição do atendimento:*','',description);
- parts.push('',`👨‍🔧 *Técnico responsável:* ${technician}`,'------------------------------------------------------------------','🤝 Permanecemos à disposição para quaisquer esclarecimentos.','', '*Equipe de Assistência Técnica | Intelimaq*','------------------------------------------------------------------','⚠️ _Mensagem enviada para fins de registro e acompanhamento do atendimento técnico._');
+ parts.push('',`👨‍🔧 *Técnico responsável:* ${technician}`,'________________________________','🤝 Permanecemos à disposição para quaisquer esclarecimentos.','', '*Equipe de Assistência Técnica | Intelimaq*','________________________________','⚠️ _Mensagem enviada para fins de registro e acompanhamento do atendimento técnico._');
  return parts.join('\n');
 }
 async function loadCompanies(selectedId=''){
@@ -53,9 +53,21 @@ async function loadHistory(){
  if(error){historyEl.innerHTML=`<p class="muted">Erro ao carregar histórico: ${escapeHtml(error.message)}</p>`;return;}
  const q=valueOf('searchHistory').toLocaleLowerCase('pt-BR');const rows=(data||[]).filter(r=>[r.empresas?.nome,r.cliente,r.contato,r.modelo_maquina,r.numero_serie,r.descricao].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(q)));
  if(!rows.length){historyEl.innerHTML='<p class="muted">Nenhum atendimento encontrado.</p>';return;}
- historyEl.innerHTML=rows.map(r=>`<article class="history-item"><div class="history-top"><strong>${escapeHtml(r.empresas?.nome||r.cliente||'Empresa não informada')}</strong><span>${escapeHtml(new Date(r.criado_em).toLocaleString('pt-BR'))}</span></div><p>${r.contato?'<b>Contato:</b> '+escapeHtml(r.contato)+' · ':''}${r.modelo_maquina?'<b>Máquina:</b> '+escapeHtml(r.modelo_maquina)+' · ':''}${r.numero_serie?'<b>Série:</b> '+escapeHtml(r.numero_serie):''}</p><p>${escapeHtml(r.descricao||'Sem descrição')}</p><small>Técnico: ${escapeHtml(r.tecnico||'—')}</small><div class="actions"><button class="secondary" data-edit="${r.id}">Editar</button><button class="secondary" data-message="${r.id}">Gerar mensagem</button></div></article>`).join('');
+ historyEl.innerHTML=rows.map(r=>`<article class="history-item"><div class="history-top"><strong>${escapeHtml(r.empresas?.nome||r.cliente||'Empresa não informada')}</strong><span>${escapeHtml(new Date(r.criado_em).toLocaleString('pt-BR'))}</span></div><p>${r.contato?'<b>Contato:</b> '+escapeHtml(r.contato)+' · ':''}${r.modelo_maquina?'<b>Máquina:</b> '+escapeHtml(r.modelo_maquina)+' · ':''}${r.numero_serie?'<b>Série:</b> '+escapeHtml(r.numero_serie):''}</p><p>${escapeHtml(r.descricao||'Sem descrição')}</p><small>Técnico: ${escapeHtml(r.tecnico||'—')}</small><div class="actions"><button class="secondary" data-edit="${r.id}">Editar</button><button class="secondary" data-message="${r.id}">Gerar mensagem</button><button class="danger" data-delete="${r.id}">Excluir</button></div></article>`).join('');
  historyEl.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>editRecord(rows.find(r=>String(r.id)===b.dataset.edit))));
  historyEl.querySelectorAll('[data-message]').forEach(b=>b.addEventListener('click',()=>{const r=rows.find(r=>String(r.id)===b.dataset.message);loadRecordIntoForm(r);output.value=buildMessage();setStatus('Mensagem montada a partir do histórico.');window.scrollTo({top:0,behavior:'smooth'});}));
+ historyEl.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>deleteRecord(b.dataset.delete)));
+}
+async function deleteRecord(id){
+ const confirmed=confirm('Tem certeza de que deseja excluir permanentemente este atendimento? Esta ação não pode ser desfeita.');
+ if(!confirmed)return;
+ if(!supabaseClient){setStatus('Supabase não está configurado.');return;}
+ setStatus('Excluindo atendimento...');
+ const {error}=await supabaseClient.from('atendimentos').delete().eq('id',id);
+ if(error){setStatus('Não foi possível excluir. Verifique a política de DELETE no Supabase: '+error.message);return;}
+ if(String(editingId)===String(id)){editingId=null;form.reset();form.querySelector('button[type="submit"]').textContent='Salvar atendimento';}
+ setStatus('Atendimento excluído com sucesso.');
+ await loadHistory();
 }
 function loadRecordIntoForm(r){companySelect.value=String(r.empresa_id||'');document.getElementById('contact').value=r.contato||'';document.getElementById('machine').value=r.modelo_maquina||'';document.getElementById('serial').value=r.numero_serie||'';document.getElementById('description').value=r.descricao||'';document.getElementById('technician').value=r.tecnico||'Alison Moura';}
 function editRecord(r){if(!r)return;loadRecordIntoForm(r);editingId=r.id;form.querySelector('button[type="submit"]').textContent='Salvar alterações';setStatus('Editando atendimento #'+r.id);window.scrollTo({top:0,behavior:'smooth'});}
